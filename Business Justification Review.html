@@ -200,6 +200,42 @@
     margin-top: 3px;
   }
 
+  .crit-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    width: 100%;
+  }
+
+  .caret {
+    flex-shrink: 0;
+    margin-left: 10px;
+    color: #aaa;
+    font-size: 11px;
+    transition: transform 0.2s;
+  }
+
+  .caret.open { transform: rotate(180deg); }
+
+  .crit-expand {
+    display: none;
+    margin-top: 8px;
+    font-size: 13px;
+    line-height: 1.6;
+    border-left: 3px solid #e0e0e0;
+    padding-left: 10px;
+    color: #555;
+    font-style: italic;
+  }
+
+  .crit-expand.missing-expand {
+    border-left-color: #fcc;
+    color: #888;
+    font-style: normal;
+  }
+
   .reset-btn {
     background: transparent;
     color: #0057b8;
@@ -280,80 +316,132 @@ const CRITERIA = {
     label: "What work this role supports and its day-to-day responsibilities",
     hint: "Describe the role's specific tasks, functions, and day-to-day work.",
     keywords: [
-      /responsibilit/i, /day.to.day/i, /day to day/i, /duties/i, /tasks/i,
-      /will be responsible/i, /role (will|would|is|supports)/i,
-      /position (will|would|is)/i, /work includes/i, /manage/i,
-      /support (the|this|a)/i, /function/i, /scope of work/i
+      /\bresponsibilit/i,
+      /day.to.day/i,
+      /\bduties\b/i,
+      /will be responsible for/i,
+      /role will (manage|support|own|lead|drive|oversee|handle|coordinate)/i,
+      /position will (manage|support|own|lead|drive|oversee|handle)/i,
+      /scope of (this )?work/i,
+      /scope of (this )?role/i,
+      /day.to.day (work|tasks|activities|responsibilities)/i,
+      /will (manage|oversee|lead|own|drive|coordinate|handle) (the|our|this)/i
     ]
   },
   critical: {
     label: "Why the role is critical and the impact it delivers",
     hint: "Explain why this role matters and what value or impact it creates.",
     keywords: [
-      /critical/i, /impact/i, /essential/i, /key (role|position|to)/i,
-      /important/i, /deliver/i, /contributes/i, /enables/i, /value/i,
-      /without (this|the) role/i, /necessary/i, /strategic/i, /vital/i
+      /\bcritical\b/i,
+      /\bessential\b/i,
+      /\bvital\b/i,
+      /\bstrategic\b/i,
+      /delivers? (value|impact|results|outcomes)/i,
+      /business (value|impact|outcome)/i,
+      /key (role|function|contributor|driver|enabler)/i,
+      /without (this|the) (role|position|hire)/i,
+      /enables? (the|our|this)/i,
+      /directly (contributes?|supports?|impacts?)/i
     ]
   },
   denied: {
     label: "The tangible business risk or impact if the request is denied",
     hint: "State clearly what happens if this headcount is not approved.",
     keywords: [
-      /risk/i, /denied/i, /if (not|this is not) approved/i,
-      /without (this|the) (role|headcount|hire|position)/i,
-      /consequence/i, /impact of/i, /unable to/i, /cannot/i,
-      /will not be able/i, /delay/i, /jeopardize/i, /loss/i,
-      /business impact/i, /failure/i, /not approved/i
+      /if (not|this is not) approved/i,
+      /if (this request is )?denied/i,
+      /without (this|the) (role|headcount|hire|position|approval)/i,
+      /\bbusiness risk\b/i,
+      /at risk of/i,
+      /risk of (delay|failure|loss|missing)/i,
+      /jeopardize/i,
+      /will not be able to/i,
+      /unable to (meet|deliver|support|complete|maintain)/i,
+      /consequence(s)? (of|would|will)/i,
+      /not approved.{0,40}(result|mean|cause|lead)/i,
+      /will (fail|result in disruption|be disrupted)/i,
+      /gap will (result|mean|cause|lead)/i,
+      /risking (costly|significant|major|serious)/i,
+      /liability (issues?|risk|exposure)/i,
+      /compliance (issues?|risk|failure|gap)/i,
+      /without a (dedicated|full.time|permanent)/i,
+      /would (fail|be unable|result in)/i
     ]
   },
   level: {
     label: "Why this Level?",
     hint: "Justify why this specific level/grade is required, not a lower one.",
     keywords: [
-      /level/i, /grade/i, /band/i, /senior/i, /principal/i, /director/i,
-      /manager/i, /why (this|the) level/i, /seniority/i,
-      /experience required/i, /expertise required/i, /requires \d+/i,
-      /years of experience/i
+      /why (this|the) level/i,
+      /this level (is|requires|demands)/i,
+      /level \d+/i,
+      /band \d+/i,
+      /grade \d+/i,
+      /\d+ years of experience/i,
+      /years of (relevant )?experience (required|needed|necessary)/i,
+      /requires? (a )?(senior|principal|director|manager|lead) (level|hire|candidate)/i,
+      /seniority (is|required|needed)/i,
+      /cannot (be )?downlevel/i,
+      /not (a )?junior/i,
+      /level of expertise (required|needed)/i
     ]
   },
   location: {
     label: "Location justification",
-    hint: "Explain why this location/office is required for this role.",
+    hint: "Explain why this specific office location is required for this role.",
     keywords: [
-      /location/i, /office/i, /remote/i, /on.?site/i, /based in/i,
-      /geography/i, /site/i, /in.person/i, /hybrid/i, /local/i,
-      /presence/i, /physical/i
+      /\blocation\b(?!alization|alize|aliz|al )/i,
+      /based (in|out of) [A-Z]/i,
+      /\boffice\b (in|at|location|presence)/i,
+      /must be (on.?site|in.person|in the office)/i,
+      /on.?site (presence|requirement|work|collaboration)/i,
+      /in.person (collaboration|meeting|presence|requirement)/i,
+      /remote (work|role|position) (is|because|due)/i,
+      /hybrid (work|role|arrangement)/i,
+      /geographic(al)? (requirement|reason|consideration)/i,
+      /physical presence (required|needed|necessary)/i,
+      /work from (home|office|new york|los angeles|burbank)/i
     ]
   },
   currentTeam: {
     label: "Why the current team cannot support this work",
     hint: "Explain why existing headcount or team cannot absorb this work.",
     keywords: [
-      /current team/i, /existing team/i, /bandwidth/i, /capacity/i,
-      /cannot (support|absorb|take on)/i, /can't (support|absorb|take on)/i,
-      /team is (at|over|already)/i, /workload/i, /stretched/i,
-      /no capacity/i, /fully allocated/i, /at capacity/i,
-      /team (does not|doesn't) have/i, /unable to absorb/i,
-      /team cannot/i, /not possible (for|with) current/i
+      /current(ly)? (team|staff|headcount|resources) (cannot|can't|is unable|are unable)/i,
+      /existing (team|staff|headcount) (cannot|can't|is unable)/i,
+      /\bbandwidth\b/i,
+      /at (full )?capacity/i,
+      /over(loaded|worked|extended|allocated)/i,
+      /fully (allocated|committed|utilized)/i,
+      /no (additional )?capacity (to|for)/i,
+      /team (cannot|is unable|can't) (absorb|support|take on|handle)/i,
+      /cannot absorb/i,
+      /workload (is|has) (already|grown|increased)/i,
+      /stretched (thin|beyond)/i,
+      /headcount (reduction|freeze) (has|left|means)/i
     ]
   },
   downlevel: {
     label: "Why this level? Can you downlevel?",
     hint: "Address whether a lower-level hire was considered and why it won't work.",
     keywords: [
-      /downlevel/i, /down.level/i, /down level/i,
-      /why (not|a) (junior|lower|entry)/i,
-      /lower level/i, /junior/i,
-      /cannot downlevel/i, /can't downlevel/i,
-      /level is required/i, /level justif/i,
-      /why this level/i, /seniority needed/i
+      /downlevel/i,
+      /down.level/i,
+      /why (not|a) (junior|lower|entry.level)/i,
+      /lower.level (hire|candidate|role)/i,
+      /\bjunior\b.{0,30}(not|won't|cannot|insufficient)/i,
+      /cannot (be )?downlevel/i,
+      /level is (required|necessary|justified)/i,
+      /seniority (is|required|needed|justified)/i,
+      /not (possible|appropriate) to downlevel/i
     ]
   },
   cascade: {
     label: "Cascade details",
     hint: "Provide specific details about the cascade — who is cascading and to where.",
     keywords: [
-      /cascade/i, /cascading/i
+      /cascade/i,
+      /cascading/i
     ]
   },
   contractLength: {
@@ -362,36 +450,44 @@ const CRITERIA = {
     keywords: [
       /contract (length|term|duration|period)/i,
       /length of (the|this) contract/i,
-      /\d+ months?/i, /\d+ weeks?/i,
-      /end of (the|this)? contract/i,
-      /after (the|this)? contract/i,
-      /contract end/i, /work (after|ends)/i,
-      /project (duration|timeline|end)/i,
-      /why (this|the) (length|term|duration)/i
+      /\d+ months? (contract|term|engagement)/i,
+      /\d+ week (contract|term|engagement)/i,
+      /end of (the|this) contract/i,
+      /after (the|this) contract (ends|expires|concludes)/i,
+      /contract end(s|date)/i,
+      /work (after|once) (the|this) contract/i,
+      /project (duration|timeline|will end|ends)/i,
+      /why (this|the) (contract )?(length|term|duration)/i
     ]
   },
   longTerm: {
     label: "Long term strategy — will you convert this role? Will this project end?",
     hint: "Address the long-term plan: conversion to FTE, project sunset, or other outcome.",
     keywords: [
-      /long.?term/i, /long term/i, /convert/i, /conversion/i,
-      /permanent/i, /project (will|is expected to) end/i,
-      /future (plan|strategy|state)/i, /strategy/i,
-      /project end/i, /sunset/i, /transition/i,
-      /will (this|the) project/i, /ongoing/i
+      /long.?term (plan|strategy|goal|vision|intent)/i,
+      /convert (this role|to (an? )?fte|to permanent)/i,
+      /conversion to (fte|full.time|permanent)/i,
+      /\bpermanent (role|position|hire)\b/i,
+      /project (will|is expected to|is planned to) end/i,
+      /future (plan|strategy|state|intent) (for|of) (this|the) (role|work)/i,
+      /project (end|sunset|conclusion|completion)/i,
+      /will (this|the) project (end|conclude|wrap)/i,
+      /no longer (needed|required) (after|once|when)/i
     ]
   },
   notFte: {
     label: "Why not convert this role to an FTE?",
     hint: "Explain why this contingent worker role is not being converted to a full-time employee.",
     keywords: [
-      /not convert/i, /cannot convert/i, /can't convert/i,
-      /why not (an?|a full.time|permanent)/i,
-      /not (an? )?fte/i, /not full.time/i,
-      /headcount (freeze|constraint|restriction)/i,
-      /no (fte|headcount) (available|approval)/i,
-      /temporary (nature|work|project)/i,
-      /project.based/i, /short.term need/i
+      /not (being )?convert(ed)? to (an? )?fte/i,
+      /cannot (be )?convert(ed)? to (an? )?fte/i,
+      /why not (an? )?fte/i,
+      /not (a )?full.time (role|position|hire)/i,
+      /headcount (freeze|constraint|restriction|cap)/i,
+      /no (fte|headcount) (available|slots?|approval|budget)/i,
+      /temporary (nature|work|project|need)/i,
+      /project.based (work|role|need)/i,
+      /short.term (need|project|work|engagement)/i
     ]
   }
 };
@@ -417,19 +513,34 @@ const REQUEST_TYPES = {
 // ── Scoring ───────────────────────────────────────────────────────────────────
 function checkCriterion(text, criterionKey) {
   const crit = CRITERIA[criterionKey];
-  // A criterion is met if at least 2 keyword patterns match (or 1 for cascade)
-  const threshold = criterionKey === "cascade" ? 1 : 1;
   const matches = crit.keywords.filter(rx => rx.test(text)).length;
-  return matches >= threshold;
+  return matches >= 1;
+}
+
+function extractExcerpt(text, criterionKey) {
+  const crit = CRITERIA[criterionKey];
+  // Split into individual sentences
+  const sentences = text.match(/[^.!?\n]+[.!?\n]*/g) || [text];
+  // Score each sentence by how many of this criterion's keywords it matches
+  const scored = sentences.map(s => ({
+    text: s.trim(),
+    score: crit.keywords.filter(rx => rx.test(s)).length
+  })).filter(s => s.score > 0 && s.text.length > 50);
+  if (!scored.length) return null;
+  // Pick the single highest-scoring sentence
+  scored.sort((a, b) => b.score - a.score);
+  const best = scored[0].text;
+  // Truncate if very long
+  return best.length > 220 ? best.slice(0, 220).trimEnd() + "…" : best;
 }
 
 function grade(passed, total) {
   const pct = passed / total;
-  if (pct === 1)   return { letter: "A", label: "Strong Justification",    cls: "grade-A" };
-  if (pct >= 0.8)  return { letter: "B", label: "Good Justification",      cls: "grade-B" };
-  if (pct >= 0.6)  return { letter: "C", label: "Needs Improvement",       cls: "grade-C" };
-  if (pct >= 0.4)  return { letter: "D", label: "Insufficient",            cls: "grade-D" };
-  return             { letter: "F", label: "Major Gaps — Revise & Resubmit", cls: "grade-F" };
+  if (pct === 1)   return { letter: "A", label: "Strong Justification",       cls: "grade-A" };
+  if (pct >= 0.8)  return { letter: "B", label: "Good Justification",         cls: "grade-B" };
+  if (pct >= 0.6)  return { letter: "C", label: "Needs Improvement",          cls: "grade-C" };
+  if (pct >= 0.4)  return { letter: "D", label: "Insufficient",               cls: "grade-D" };
+  return             { letter: "F", label: "Major Gaps — Revise & Resubmit",  cls: "grade-F" };
 }
 
 // ── Main review ───────────────────────────────────────────────────────────────
@@ -443,12 +554,13 @@ function review() {
   const criteriaKeys = REQUEST_TYPES[type];
   const results = criteriaKeys.map(key => ({
     key,
-    passed: checkCriterion(text, key)
+    passed: checkCriterion(text, key),
+    excerpt: extractExcerpt(text, key)
   }));
 
-  const passed = results.filter(r => r.passed).length;
-  const total  = results.length;
-  const g      = grade(passed, total);
+  const passed  = results.filter(r => r.passed).length;
+  const total   = results.length;
+  const g       = grade(passed, total);
   const missing = results.filter(r => !r.passed).length;
 
   // Grade banner
@@ -462,14 +574,26 @@ function review() {
   // Criteria list
   const list = document.getElementById("criteria-list");
   list.innerHTML = "";
-  results.forEach(r => {
+  results.forEach((r, i) => {
     const crit = CRITERIA[r.key];
     const li = document.createElement("li");
+    const expandId = `expand-${i}`;
+    const caretId  = `caret-${i}`;
+
+    const expandContent = r.excerpt
+      ? `"${r.excerpt}"`
+      : (r.passed ? "Criterion addressed." : "No relevant content found in submission.");
+
     li.innerHTML = `
       <span class="icon ${r.passed ? "icon-pass" : "icon-fail"}">${r.passed ? "✓" : "✗"}</span>
-      <div>
-        <div class="crit-text ${r.passed ? "" : "missing"}">${crit.label}</div>
-        ${!r.passed ? `<div class="missing-note">${crit.hint}</div>` : ""}
+      <div style="flex:1; min-width:0;">
+        <div class="crit-header" onclick="toggleExpand('${expandId}','${caretId}')">
+          <span class="crit-text ${r.passed ? "" : "missing"}">${crit.label}</span>
+          <span class="caret" id="${caretId}">▼</span>
+        </div>
+        <div class="crit-expand ${r.passed ? "" : "missing-expand"}" id="${expandId}">
+          ${expandContent}
+        </div>
       </div>
     `;
     list.appendChild(li);
@@ -479,6 +603,14 @@ function review() {
   document.getElementById("form-section").style.display = "none";
   document.getElementById("results").style.display = "block";
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function toggleExpand(expandId, caretId) {
+  const el    = document.getElementById(expandId);
+  const caret = document.getElementById(caretId);
+  const open  = el.style.display === "block";
+  el.style.display = open ? "none" : "block";
+  caret.classList.toggle("open", !open);
 }
 
 function reset() {
