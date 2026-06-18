@@ -316,16 +316,17 @@ const CRITERIA = {
     label: "What work this role supports and its day-to-day responsibilities",
     hint: "Describe the role's specific tasks, functions, and day-to-day work.",
     keywords: [
-      /\bresponsibilit/i,
+      /\bresponsib/i,
       /day.to.day/i,
       /\bduties\b/i,
-      /will be responsible for/i,
-      /role will (manage|support|own|lead|drive|oversee|handle|coordinate)/i,
-      /position will (manage|support|own|lead|drive|oversee|handle)/i,
-      /scope of (this )?work/i,
-      /scope of (this )?role/i,
-      /day.to.day (work|tasks|activities|responsibilities)/i,
-      /will (manage|oversee|lead|own|drive|coordinate|handle) (the|our|this)/i
+      /(is|are|was|will be) responsible for/i,
+      /role (will |is |was )?(manage|support|own|lead|drive|oversee|handle|coordinate|implement|sustain)/i,
+      /position (will |is |was )?(manage|support|own|lead|drive|oversee|handle|implement)/i,
+      /scope of (this |the )?(work|role)/i,
+      /(managing|overseeing|leading|coordinating|handling|implementing|sustaining|supporting) (the|our|this|servers|storage|content|product)/i,
+      /includes? (managing|overseeing|leading|coordinating|handling|implementing|partnering|supporting)/i,
+      /will (manage|oversee|lead|own|drive|coordinate|handle) (the|our|this)/i,
+      /day.to.day (work|tasks|activities|responsibilities)/i
     ]
   },
   critical: {
@@ -340,8 +341,11 @@ const CRITERIA = {
       /business (value|impact|outcome)/i,
       /key (role|function|contributor|driver|enabler)/i,
       /without (this|the) (role|position|hire)/i,
-      /enables? (the|our|this)/i,
-      /directly (contributes?|supports?|impacts?)/i
+      /enables? (the|our|this|content|production|distribution)/i,
+      /directly (contributes?|supports?|impacts?)/i,
+      /force multiplier/i,
+      /drives? (growth|value|impact|adoption|production|distribution)/i,
+      /underpins?|backbone|foundational/i
     ]
   },
   denied: {
@@ -350,22 +354,23 @@ const CRITERIA = {
     keywords: [
       /if (not|this is not) approved/i,
       /if (this request is )?denied/i,
-      /without (this|the) (role|headcount|hire|position|approval)/i,
+      /without (this|the|a) (role|headcount|hire|position|approval|dedicated|resource)/i,
       /\bbusiness risk\b/i,
       /at risk of/i,
-      /risk of (delay|failure|loss|missing)/i,
+      /risk of (delay|failure|loss|missing|falling)/i,
       /jeopardize/i,
       /will not be able to/i,
       /unable to (meet|deliver|support|complete|maintain)/i,
       /consequence(s)? (of|would|will)/i,
       /not approved.{0,40}(result|mean|cause|lead)/i,
-      /will (fail|result in disruption|be disrupted)/i,
+      /will (fail|result in|be disrupted|be slower|be fragmented)/i,
       /gap will (result|mean|cause|lead)/i,
       /risking (costly|significant|major|serious)/i,
       /liability (issues?|risk|exposure)/i,
       /compliance (issues?|risk|failure|gap)/i,
-      /without a (dedicated|full.time|permanent)/i,
-      /would (fail|be unable|result in)/i
+      /would (fail|be unable|result in|be slower|be more)/i,
+      /(slower|reduced|limited|fragmented) (realization|ability|capacity|adoption|support)/i,
+      /disrupted?|disruption/i
     ]
   },
   level: {
@@ -418,8 +423,8 @@ const CRITERIA = {
     label: "Why the current team cannot support this work",
     hint: "Explain why existing headcount or team cannot absorb this work.",
     keywords: [
-      /current(ly)? (team|staff|headcount|resources) (cannot|can't|is unable|are unable)/i,
-      /existing (team|staff|headcount) (cannot|can't|is unable)/i,
+      /current(ly)? (team|staff|headcount|resources) (cannot|can't|is unable|are unable|are (too )?junior)/i,
+      /existing (team|staff|headcount) (cannot|can't|is unable|are)/i,
       /\bbandwidth\b/i,
       /at (full )?capacity/i,
       /over(loaded|worked|extended|allocated)/i,
@@ -429,7 +434,13 @@ const CRITERIA = {
       /cannot absorb/i,
       /workload (is|has) (already|grown|increased)/i,
       /stretched (thin|beyond)/i,
-      /headcount (reduction|freeze) (has|left|means)/i
+      /headcount (reduction|freeze) (has|left|means)/i,
+      /staff (are|is) (too )?(junior|entry.level|not senior)/i,
+      /(too )?junior to (absorb|handle|support|take on|manage)/i,
+      /reporting to this role are/i,
+      /existing (staff|team|resources) (are|is) (junior|insufficient|unable|not)/i,
+      /churn (adds?|creates?|introduces?)/i,
+      /rotating (individuals?|contractors?|staff)/i
     ]
   },
   downlevel: {
@@ -440,11 +451,14 @@ const CRITERIA = {
       /down.level/i,
       /why (not|a) (junior|lower|entry.level)/i,
       /lower.level (hire|candidate|role)/i,
-      /\bjunior\b.{0,30}(not|won't|cannot|insufficient)/i,
+      /\bjunior\b.{0,50}(not|won't|cannot|insufficient|unable|too)/i,
+      /(too )?junior to (absorb|handle|support|take on|manage|fulfill)/i,
       /cannot (be )?downlevel/i,
       /level is (required|necessary|justified)/i,
       /seniority (is|required|needed|justified)/i,
-      /not (possible|appropriate) to downlevel/i
+      /not (possible|appropriate) to downlevel/i,
+      /staff (are|is) (too )?junior/i,
+      /current staff.{0,60}junior/i
     ]
   },
   cascade: {
