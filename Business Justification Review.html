@@ -514,25 +514,96 @@ const CRITERIA = {
       /project.based (work|role|need)/i,
       /short.term (need|project|work|engagement)/i
     ]
+  },
+  topPriority: {
+    label: "What top priority does this align to?",
+    hint: "Identify which company or team top priority this role supports.",
+    keywords: [
+      /top priority/i,
+      /strategic priority/i,
+      /aligns? to (a |our |the )?(top |strategic |company |business )?priority/i,
+      /priority (alignment|this aligns)/i,
+      /supports? (a |our |the )?(top |strategic |company |key )?priority/i,
+      /\bOKR\b/i,
+      /key initiative/i,
+      /strategic initiative/i,
+      /company (priority|goal|objective)/i,
+      /business (priority|objective|goal)/i,
+      /aligns? (to|with) (our |the )?(company|team|org|business) (goal|objective|strategy|roadmap)/i
+    ]
+  },
+  incrementalChange: {
+    label: "What specifically changed that created this need?",
+    hint: "Explain what new demand, initiative, or change drove this incremental request.",
+    keywords: [
+      /what (specifically |has )changed/i,
+      /created this need/i,
+      /why now/i,
+      /change(s|d) (that|which) (created|drove|triggered|resulted in)/i,
+      /new (initiative|project|program|demand|requirement|mandate)/i,
+      /incremental (need|demand|growth|volume|work)/i,
+      /volume (increased|grew|has grown|is growing)/i,
+      /increase (in|of) (volume|demand|workload|scope)/i,
+      /expanded? (scope|remit|responsibility|mandate)/i,
+      /additional (demand|volume|workload|scope|responsibility)/i,
+      /growing (demand|volume|workload|need)/i,
+      /new (business|product|market|region|platform|capability)/i,
+      /launch(ing|ed)? (of|a) new/i
+    ]
+  },
+  directReports: {
+    label: "For M2+ roles: How many direct reports will this role have, and what level will they report into?",
+    hint: "State the number of direct reports and their levels (required for M2+ roles only).",
+    keywords: [
+      /direct reports?/i,
+      /will (manage|oversee|lead) \d+/i,
+      /\d+ direct reports?/i,
+      /reports? (into|to) this role/i,
+      /team of \d+/i,
+      /managing a team/i,
+      /people manager/i,
+      /\d+ (staff|employees?|individuals?) report/i,
+      /supervise(s|d)? \d+/i,
+      /not (a )?people manager/i,
+      /no direct reports?/i,
+      /individual contributor/i
+    ]
+  },
+  repurposeJustification: {
+    label: "Why is this a repurpose and not a new need?",
+    hint: "Explain why this qualifies as a repurpose of existing headcount rather than a net-new request.",
+    keywords: [
+      /not a new (need|role|position|hire)/i,
+      /repurpose (because|as|since|of)/i,
+      /existing (headcount|role|position|budget|slot) (is |being |was )?repurposed/i,
+      /budget.neutral/i,
+      /converting (an? |the )?existing/i,
+      /same (budget|headcount|slot|funding)/i,
+      /this is not (an? |a )new/i,
+      /vacated (role|position)/i,
+      /redirect(ing|ed)? (an? |the )?existing/i,
+      /repurposing (an? |the )?existing/i,
+      /within (the |our )?existing (budget|headcount|allocation)/i
+    ]
   }
 };
 
 // ── Criteria per request type ─────────────────────────────────────────────────
 const REQUEST_TYPES = {
-  "fte-new":      ["responsibilities","critical","denied","level","location"],
-  "fte-backfill": ["responsibilities","critical","denied","currentTeam","downlevel"],
-  "fte-repurpose":["responsibilities","critical","denied","currentTeam","downlevel"],
-  "fte-cascade":  ["responsibilities","critical","denied","currentTeam","downlevel","cascade"],
-  "cw-new":       ["responsibilities","critical","denied","contractLength","longTerm"],
-  "cw-backfill":  ["responsibilities","critical","denied","currentTeam","contractLength","longTerm"],
-  "cw-extension": ["responsibilities","critical","denied","currentTeam","contractLength","longTerm","notFte"],
-  "cw-repurpose": ["responsibilities","critical","denied","currentTeam","contractLength","longTerm"],
-  "ph-new":       ["responsibilities","critical","denied","level","location"],
-  "ph-backfill":  ["responsibilities","critical","denied","currentTeam","downlevel"],
-  "ph-repurpose": ["responsibilities","critical","denied","currentTeam","downlevel"],
-  "ftc-new":      ["responsibilities","critical","denied","level","location"],
-  "ftc-backfill": ["responsibilities","critical","denied","currentTeam","downlevel"],
-  "ftc-repurpose":["responsibilities","critical","denied","currentTeam","downlevel"]
+  "fte-new":      ["responsibilities","critical","denied","level","location","topPriority","incrementalChange","directReports"],
+  "fte-backfill": ["responsibilities","critical","denied","currentTeam","downlevel","topPriority","directReports"],
+  "fte-repurpose":["responsibilities","critical","denied","currentTeam","downlevel","topPriority","directReports"],
+  "fte-cascade":  ["responsibilities","critical","denied","currentTeam","downlevel","cascade","topPriority","directReports"],
+  "cw-new":       ["responsibilities","critical","denied","contractLength","longTerm","topPriority","incrementalChange"],
+  "cw-backfill":  ["responsibilities","critical","denied","currentTeam","contractLength","longTerm","topPriority"],
+  "cw-extension": ["responsibilities","critical","denied","currentTeam","contractLength","longTerm","notFte","topPriority"],
+  "cw-repurpose": ["responsibilities","critical","denied","currentTeam","contractLength","longTerm","topPriority","repurposeJustification"],
+  "ph-new":       ["responsibilities","critical","denied","level","location","topPriority","incrementalChange"],
+  "ph-backfill":  ["responsibilities","critical","denied","currentTeam","downlevel","topPriority"],
+  "ph-repurpose": ["responsibilities","critical","denied","currentTeam","downlevel","topPriority","repurposeJustification"],
+  "ftc-new":      ["responsibilities","critical","denied","level","location","topPriority","incrementalChange"],
+  "ftc-backfill": ["responsibilities","critical","denied","currentTeam","downlevel","topPriority"],
+  "ftc-repurpose":["responsibilities","critical","denied","currentTeam","downlevel","topPriority","repurposeJustification"]
 };
 
 // ── Scoring ───────────────────────────────────────────────────────────────────
