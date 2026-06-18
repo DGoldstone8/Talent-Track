@@ -257,7 +257,7 @@
     <div class="card">
       <div class="field-group">
         <label for="requestType">Request Type</label>
-        <select id="requestType">
+        <select id="requestType" onchange="toggleLevelField()">
           <option value="">— Select a request type —</option>
           <optgroup label="FTE">
             <option value="fte-new">FTE New Need / Incremental</option>
@@ -280,6 +280,46 @@
             <option value="ftc-new">FTC New Need / Incremental</option>
             <option value="ftc-backfill">FTC Backfill</option>
             <option value="ftc-repurpose">FTC Repurpose Backfill</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="field-group" id="level-field" style="display:none">
+        <label for="roleLevel">Role Level</label>
+        <select id="roleLevel">
+          <option value="">— Select a level —</option>
+          <optgroup label="Business Support">
+            <option value="B1">Business Support (B1)</option>
+            <option value="B2">Business Support (B2)</option>
+            <option value="B3">Business Support (B3)</option>
+            <option value="B4">Business Support (B4)</option>
+          </optgroup>
+          <optgroup label="Technical Support">
+            <option value="T1">Technical Support (T1)</option>
+            <option value="T2">Technical Support (T2)</option>
+            <option value="T3">Technical Support (T3)</option>
+            <option value="T4">Technical Support (T4)</option>
+          </optgroup>
+          <optgroup label="Professional">
+            <option value="P1">Professional (P1)</option>
+            <option value="P2">Professional (P2)</option>
+            <option value="P3">Professional (P3)</option>
+            <option value="P4">Professional (P4)</option>
+            <option value="P5">Professional (P5)</option>
+            <option value="P6">Professional (P6)</option>
+            <option value="P7">Professional (P7)</option>
+          </optgroup>
+          <optgroup label="Management">
+            <option value="M1">Management (M1)</option>
+            <option value="M2">Management (M2)</option>
+            <option value="M3">Management (M3)</option>
+          </optgroup>
+          <optgroup label="Executive">
+            <option value="E1">Executive (E1)</option>
+            <option value="E1X">Executive (E1X)</option>
+            <option value="E2">Executive (E2)</option>
+            <option value="E3">Executive (E3)</option>
+            <option value="E4">Executive (E4)</option>
+            <option value="E5">Executive (E5)</option>
           </optgroup>
         </select>
       </div>
@@ -552,7 +592,7 @@ const CRITERIA = {
     ]
   },
   directReports: {
-    label: "For M2+ roles: How many direct reports will this role have, and what level will they report into?",
+    label: "How many direct reports will this role have, and what level will they report into?",
     hint: "State the number of direct reports and their levels (required for M2+ roles only).",
     keywords: [
       /direct reports?/i,
@@ -639,15 +679,36 @@ function grade(passed, total) {
   return             { letter: "F", label: "Major Gaps — Revise & Resubmit",  cls: "grade-F" };
 }
 
+// ── FTE types that require level selection ────────────────────────────────────
+const FTE_TYPES = ["fte-new","fte-backfill","fte-repurpose","fte-cascade"];
+const M2_PLUS   = ["M2","M3","E1","E1X","E2","E3","E4","E5"];
+
+function toggleLevelField() {
+  const type = document.getElementById("requestType").value;
+  const levelField = document.getElementById("level-field");
+  levelField.style.display = FTE_TYPES.includes(type) ? "block" : "none";
+  if (!FTE_TYPES.includes(type)) document.getElementById("roleLevel").value = "";
+}
+
+function isM2Plus() {
+  const level = document.getElementById("roleLevel").value;
+  return M2_PLUS.includes(level);
+}
+
 // ── Main review ───────────────────────────────────────────────────────────────
 function review() {
-  const type = document.getElementById("requestType").value;
-  const text = document.getElementById("justification").value.trim();
+  const type  = document.getElementById("requestType").value;
+  const text  = document.getElementById("justification").value.trim();
+  const level = document.getElementById("roleLevel").value;
 
   if (!type) { alert("Please select a request type."); return; }
-  if (!text)  { alert("Please paste a business justification."); return; }
+  if (FTE_TYPES.includes(type) && !level) { alert("Please select a role level."); return; }
+  if (!text) { alert("Please paste a business justification."); return; }
 
-  const criteriaKeys = REQUEST_TYPES[type];
+  // Remove directReports for P-level and M1 FTE roles
+  const criteriaKeys = REQUEST_TYPES[type].filter(key =>
+    key !== "directReports" || isM2Plus()
+  );
   const results = criteriaKeys.map(key => ({
     key,
     passed: checkCriterion(text, key),
@@ -713,6 +774,8 @@ function reset() {
   document.getElementById("form-section").style.display = "block";
   document.getElementById("results").style.display = "none";
   document.getElementById("justification").value = "";
+  document.getElementById("roleLevel").value = "";
+  document.getElementById("level-field").style.display = "none";
 }
 </script>
 </body>
