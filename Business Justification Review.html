@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Justification Review</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f4f5f7;
+    color: #1a1a2e;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  header {
+    margin-bottom: 32px;
+  }
+
+  header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+
+  header p {
+    margin-top: 6px;
+    color: #666;
+    font-size: 14px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    margin-bottom: 24px;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  select, textarea {
+    width: 100%;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 15px;
+    font-family: inherit;
+    color: #1a1a2e;
+    background: #fafafa;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+
+  select:focus, textarea:focus {
+    border-color: #0057b8;
+    background: #fff;
+  }
+
+  select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 180px;
+    line-height: 1.6;
+  }
+
+  .field-group {
+    margin-bottom: 20px;
+  }
+
+  .field-group:last-child {
+    margin-bottom: 0;
+  }
+
+  button {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: #0057b8;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    letter-spacing: 0.02em;
+  }
+
+  button:hover { background: #0046a0; }
+  button:active { background: #003888; }
+
+  /* Results */
+  #results { display: none; }
+
+  .grade-banner {
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .grade-letter {
+    font-size: 52px;
+    font-weight: 800;
+    line-height: 1;
+    min-width: 60px;
+    text-align: center;
+  }
+
+  .grade-info h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .grade-info p {
+    font-size: 14px;
+    opacity: 0.85;
+  }
+
+  .grade-A { background: #e6f4ea; color: #1e7e34; }
+  .grade-B { background: #e8f0fe; color: #1a73e8; }
+  .grade-C { background: #fff8e1; color: #b06000; }
+  .grade-D { background: #fce8e6; color: #c5221f; }
+  .grade-F { background: #fce8e6; color: #c5221f; }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #888;
+    margin-bottom: 14px;
+  }
+
+  .criteria-list {
+    list-style: none;
+  }
+
+  .criteria-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .criteria-list li:last-child { border-bottom: none; }
+
+  .icon {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    margin-top: 1px;
+    font-weight: 700;
+  }
+
+  .icon-pass { background: #e6f4ea; color: #1e7e34; }
+  .icon-fail { background: #fce8e6; color: #c5221f; }
+
+  .crit-text { color: #333; }
+  .crit-text.missing { color: #c5221f; font-weight: 500; }
+
+  .missing-note {
+    font-size: 12px;
+    color: #888;
+    margin-top: 3px;
+  }
+
+  .reset-btn {
+    background: transparent;
+    color: #0057b8;
+    border: 1.5px solid #0057b8;
+    margin-top: 4px;
+  }
+
+  .reset-btn:hover { background: #f0f6ff; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Business Justification Review</h1>
+    <p>Select the request type, paste the justification, and get an instant grade with gap analysis.</p>
+  </header>
+
+  <div id="form-section">
+    <div class="card">
+      <div class="field-group">
+        <label for="requestType">Request Type</label>
+        <select id="requestType">
+          <option value="">— Select a request type —</option>
+          <optgroup label="FTE">
+            <option value="fte-new">FTE New Need / Incremental</option>
+            <option value="fte-backfill">FTE Backfill</option>
+            <option value="fte-repurpose">FTE Repurpose Backfill</option>
+            <option value="fte-cascade">FTE Cascade</option>
+          </optgroup>
+          <optgroup label="CW (Contingent Worker)">
+            <option value="cw-new">CW New Need / Incremental</option>
+            <option value="cw-backfill">CW Backfill</option>
+            <option value="cw-extension">CW Extension</option>
+            <option value="cw-repurpose">CW Repurpose Backfill</option>
+          </optgroup>
+          <optgroup label="PH (Personal/Hourly)">
+            <option value="ph-new">PH New Need / Incremental</option>
+            <option value="ph-backfill">PH Backfill</option>
+            <option value="ph-repurpose">PH Repurpose Backfill</option>
+          </optgroup>
+          <optgroup label="FTC (Fixed Term Contract)">
+            <option value="ftc-new">FTC New Need / Incremental</option>
+            <option value="ftc-backfill">FTC Backfill</option>
+            <option value="ftc-repurpose">FTC Repurpose Backfill</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="field-group">
+        <label for="justification">Business Justification</label>
+        <textarea id="justification" placeholder="Paste the submitted business justification here…"></textarea>
+      </div>
+      <button onclick="review()">Review Justification</button>
+    </div>
+  </div>
+
+  <div id="results">
+    <div id="grade-banner" class="grade-banner">
+      <div class="grade-letter" id="grade-letter"></div>
+      <div class="grade-info">
+        <h2 id="grade-label"></h2>
+        <p id="grade-summary"></p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Criteria Checklist</div>
+      <ul class="criteria-list" id="criteria-list"></ul>
+    </div>
+
+    <button class="reset-btn" onclick="reset()">← Review Another</button>
+  </div>
+</div>
+
+<script>
+// ── Criteria definitions ──────────────────────────────────────────────────────
+const CRITERIA = {
+  responsibilities: {
+    label: "What work this role supports and its day-to-day responsibilities",
+    hint: "Describe the role's specific tasks, functions, and day-to-day work.",
+    keywords: [
+      /responsibilit/i, /day.to.day/i, /day to day/i, /duties/i, /tasks/i,
+      /will be responsible/i, /role (will|would|is|supports)/i,
+      /position (will|would|is)/i, /work includes/i, /manage/i,
+      /support (the|this|a)/i, /function/i, /scope of work/i
+    ]
+  },
+  critical: {
+    label: "Why the role is critical and the impact it delivers",
+    hint: "Explain why this role matters and what value or impact it creates.",
+    keywords: [
+      /critical/i, /impact/i, /essential/i, /key (role|position|to)/i,
+      /important/i, /deliver/i, /contributes/i, /enables/i, /value/i,
+      /without (this|the) role/i, /necessary/i, /strategic/i, /vital/i
+    ]
+  },
+  denied: {
+    label: "The tangible business risk or impact if the request is denied",
+    hint: "State clearly what happens if this headcount is not approved.",
+    keywords: [
+      /risk/i, /denied/i, /if (not|this is not) approved/i,
+      /without (this|the) (role|headcount|hire|position)/i,
+      /consequence/i, /impact of/i, /unable to/i, /cannot/i,
+      /will not be able/i, /delay/i, /jeopardize/i, /loss/i,
+      /business impact/i, /failure/i, /not approved/i
+    ]
+  },
+  level: {
+    label: "Why this Level?",
+    hint: "Justify why this specific level/grade is required, not a lower one.",
+    keywords: [
+      /level/i, /grade/i, /band/i, /senior/i, /principal/i, /director/i,
+      /manager/i, /why (this|the) level/i, /seniority/i,
+      /experience required/i, /expertise required/i, /requires \d+/i,
+      /years of experience/i
+    ]
+  },
+  location: {
+    label: "Location justification",
+    hint: "Explain why this location/office is required for this role.",
+    keywords: [
+      /location/i, /office/i, /remote/i, /on.?site/i, /based in/i,
+      /geography/i, /site/i, /in.person/i, /hybrid/i, /local/i,
+      /presence/i, /physical/i
+    ]
+  },
+  currentTeam: {
+    label: "Why the current team cannot support this work",
+    hint: "Explain why existing headcount or team cannot absorb this work.",
+    keywords: [
+      /current team/i, /existing team/i, /bandwidth/i, /capacity/i,
+      /cannot (support|absorb|take on)/i, /can't (support|absorb|take on)/i,
+      /team is (at|over|already)/i, /workload/i, /stretched/i,
+      /no capacity/i, /fully allocated/i, /at capacity/i,
+      /team (does not|doesn't) have/i, /unable to absorb/i,
+      /team cannot/i, /not possible (for|with) current/i
+    ]
+  },
+  downlevel: {
+    label: "Why this level? Can you downlevel?",
+    hint: "Address whether a lower-level hire was considered and why it won't work.",
+    keywords: [
+      /downlevel/i, /down.level/i, /down level/i,
+      /why (not|a) (junior|lower|entry)/i,
+      /lower level/i, /junior/i,
+      /cannot downlevel/i, /can't downlevel/i,
+      /level is required/i, /level justif/i,
+      /why this level/i, /seniority needed/i
+    ]
+  },
+  cascade: {
+    label: "Cascade details",
+    hint: "Provide specific details about the cascade — who is cascading and to where.",
+    keywords: [
+      /cascade/i, /cascading/i
+    ]
+  },
+  contractLength: {
+    label: "Why this length of contract? What happens to this work after this contract ends?",
+    hint: "Justify the contract duration and explain what happens to the work when it ends.",
+    keywords: [
+      /contract (length|term|duration|period)/i,
+      /length of (the|this) contract/i,
+      /\d+ months?/i, /\d+ weeks?/i,
+      /end of (the|this)? contract/i,
+      /after (the|this)? contract/i,
+      /contract end/i, /work (after|ends)/i,
+      /project (duration|timeline|end)/i,
+      /why (this|the) (length|term|duration)/i
+    ]
+  },
+  longTerm: {
+    label: "Long term strategy — will you convert this role? Will this project end?",
+    hint: "Address the long-term plan: conversion to FTE, project sunset, or other outcome.",
+    keywords: [
+      /long.?term/i, /long term/i, /convert/i, /conversion/i,
+      /permanent/i, /project (will|is expected to) end/i,
+      /future (plan|strategy|state)/i, /strategy/i,
+      /project end/i, /sunset/i, /transition/i,
+      /will (this|the) project/i, /ongoing/i
+    ]
+  },
+  notFte: {
+    label: "Why not convert this role to an FTE?",
+    hint: "Explain why this contingent worker role is not being converted to a full-time employee.",
+    keywords: [
+      /not convert/i, /cannot convert/i, /can't convert/i,
+      /why not (an?|a full.time|permanent)/i,
+      /not (an? )?fte/i, /not full.time/i,
+      /headcount (freeze|constraint|restriction)/i,
+      /no (fte|headcount) (available|approval)/i,
+      /temporary (nature|work|project)/i,
+      /project.based/i, /short.term need/i
+    ]
+  }
+};
+
+// ── Criteria per request type ─────────────────────────────────────────────────
+const REQUEST_TYPES = {
+  "fte-new":      ["responsibilities","critical","denied","level","location"],
+  "fte-backfill": ["responsibilities","critical","denied","currentTeam","downlevel"],
+  "fte-repurpose":["responsibilities","critical","denied","currentTeam","downlevel"],
+  "fte-cascade":  ["responsibilities","critical","denied","currentTeam","downlevel","cascade"],
+  "cw-new":       ["responsibilities","critical","denied","contractLength","longTerm"],
+  "cw-backfill":  ["responsibilities","critical","denied","currentTeam","contractLength","longTerm"],
+  "cw-extension": ["responsibilities","critical","denied","currentTeam","contractLength","longTerm","notFte"],
+  "cw-repurpose": ["responsibilities","critical","denied","currentTeam","contractLength","longTerm"],
+  "ph-new":       ["responsibilities","critical","denied","level","location"],
+  "ph-backfill":  ["responsibilities","critical","denied","currentTeam","downlevel"],
+  "ph-repurpose": ["responsibilities","critical","denied","currentTeam","downlevel"],
+  "ftc-new":      ["responsibilities","critical","denied","level","location"],
+  "ftc-backfill": ["responsibilities","critical","denied","currentTeam","downlevel"],
+  "ftc-repurpose":["responsibilities","critical","denied","currentTeam","downlevel"]
+};
+
+// ── Scoring ───────────────────────────────────────────────────────────────────
+function checkCriterion(text, criterionKey) {
+  const crit = CRITERIA[criterionKey];
+  // A criterion is met if at least 2 keyword patterns match (or 1 for cascade)
+  const threshold = criterionKey === "cascade" ? 1 : 1;
+  const matches = crit.keywords.filter(rx => rx.test(text)).length;
+  return matches >= threshold;
+}
+
+function grade(passed, total) {
+  const pct = passed / total;
+  if (pct === 1)   return { letter: "A", label: "Strong Justification",    cls: "grade-A" };
+  if (pct >= 0.8)  return { letter: "B", label: "Good Justification",      cls: "grade-B" };
+  if (pct >= 0.6)  return { letter: "C", label: "Needs Improvement",       cls: "grade-C" };
+  if (pct >= 0.4)  return { letter: "D", label: "Insufficient",            cls: "grade-D" };
+  return             { letter: "F", label: "Major Gaps — Revise & Resubmit", cls: "grade-F" };
+}
+
+// ── Main review ───────────────────────────────────────────────────────────────
+function review() {
+  const type = document.getElementById("requestType").value;
+  const text = document.getElementById("justification").value.trim();
+
+  if (!type) { alert("Please select a request type."); return; }
+  if (!text)  { alert("Please paste a business justification."); return; }
+
+  const criteriaKeys = REQUEST_TYPES[type];
+  const results = criteriaKeys.map(key => ({
+    key,
+    passed: checkCriterion(text, key)
+  }));
+
+  const passed = results.filter(r => r.passed).length;
+  const total  = results.length;
+  const g      = grade(passed, total);
+  const missing = results.filter(r => !r.passed).length;
+
+  // Grade banner
+  const banner = document.getElementById("grade-banner");
+  banner.className = `grade-banner ${g.cls}`;
+  document.getElementById("grade-letter").textContent = g.letter;
+  document.getElementById("grade-label").textContent  = g.label;
+  document.getElementById("grade-summary").textContent =
+    `${passed} of ${total} criteria addressed${missing > 0 ? ` · ${missing} gap${missing > 1 ? "s" : ""} identified` : " · All criteria met!"}`;
+
+  // Criteria list
+  const list = document.getElementById("criteria-list");
+  list.innerHTML = "";
+  results.forEach(r => {
+    const crit = CRITERIA[r.key];
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <span class="icon ${r.passed ? "icon-pass" : "icon-fail"}">${r.passed ? "✓" : "✗"}</span>
+      <div>
+        <div class="crit-text ${r.passed ? "" : "missing"}">${crit.label}</div>
+        ${!r.passed ? `<div class="missing-note">${crit.hint}</div>` : ""}
+      </div>
+    `;
+    list.appendChild(li);
+  });
+
+  // Show results
+  document.getElementById("form-section").style.display = "none";
+  document.getElementById("results").style.display = "block";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function reset() {
+  document.getElementById("form-section").style.display = "block";
+  document.getElementById("results").style.display = "none";
+  document.getElementById("justification").value = "";
+}
+</script>
+</body>
+</html>
