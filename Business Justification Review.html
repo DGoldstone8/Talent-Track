@@ -194,6 +194,40 @@
   .crit-text { color: #333; }
   .crit-text.missing { color: #c5221f; font-weight: 500; }
 
+  .crit-context {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    color: #888;
+    background: #f0f0f0;
+    border-radius: 4px;
+    padding: 1px 7px;
+    margin-left: 8px;
+    vertical-align: middle;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .weak-pass-warning {
+    font-size: 12px;
+    color: #b06000;
+    background: #fff8e1;
+    border-radius: 4px;
+    padding: 3px 8px;
+    margin-top: 5px;
+    display: inline-block;
+  }
+
+  .tip-box {
+    font-size: 12px;
+    color: #0057b8;
+    background: #e8f0fe;
+    border-radius: 4px;
+    padding: 5px 10px;
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
   .missing-note {
     font-size: 12px;
     color: #888;
@@ -354,7 +388,8 @@
 const CRITERIA = {
   responsibilities: {
     label: "What work this role supports and its day-to-day responsibilities",
-    hint: "Describe the role's specific tasks, functions, and day-to-day work.",
+    context: "All types",
+    hint: "Tip: Name the specific functions, systems, or teams this role supports and list concrete day-to-day tasks — not just the team's mission.",
     keywords: [
       /\bresponsib/i,
       /day.to.day/i,
@@ -371,7 +406,8 @@ const CRITERIA = {
   },
   critical: {
     label: "Why the role is critical and the impact it delivers",
-    hint: "Explain why this role matters and what value or impact it creates.",
+    context: "All types",
+    hint: "Tip: Explain the specific business outcome this role enables — e.g. revenue, compliance, speed to market, or customer experience — not just that it's 'important.'",
     keywords: [
       /\bcritical\b/i,
       /\bessential\b/i,
@@ -390,7 +426,8 @@ const CRITERIA = {
   },
   denied: {
     label: "The tangible business risk or impact if the request is denied",
-    hint: "State clearly what happens if this headcount is not approved.",
+    context: "All types",
+    hint: "Tip: Describe a specific, concrete consequence — e.g. 'X initiative will be delayed,' 'compliance obligations will not be met,' or 'Y team will lose capacity to deliver Z.' Avoid vague statements like 'we will struggle.'",
     keywords: [
       /if (not|this is not) approved/i,
       /if (this request is )?denied/i,
@@ -415,7 +452,8 @@ const CRITERIA = {
   },
   level: {
     label: "Why this Level?",
-    hint: "Justify why this specific level/grade is required, not a lower one.",
+    context: "New Need / Incremental",
+    hint: "Tip: Explain what specific experience, expertise, or seniority the work demands — and why a lower level would be insufficient. Reference years of experience, scope of influence, or technical depth required.",
     keywords: [
       /why (this|the) level/i,
       /this level (is|requires|demands)/i,
@@ -438,7 +476,8 @@ const CRITERIA = {
   },
   location: {
     label: "Location justification",
-    hint: "Explain why this specific office location is required for this role.",
+    context: "New Need / Incremental",
+    hint: "Tip: State where the role is based and why that location is necessary — e.g. proximity to key stakeholders, on-site requirements, or existing talent location. Don't just name the city; explain the business reason.",
     keywords: [
       /\blocations?\b(?!alization|alize|aliz)/i,
       /requested locations? (align|reflect|match|correspond)/i,
@@ -461,7 +500,8 @@ const CRITERIA = {
   },
   currentTeam: {
     label: "Why the current team cannot support this work",
-    hint: "Explain why existing headcount or team cannot absorb this work.",
+    context: "Backfill / Repurpose / Extension",
+    hint: "Tip: Explain the current team's capacity constraints — e.g. existing workload, skill gaps, or headcount reductions. Don't just say they're busy; quantify or describe what they're already committed to.",
     keywords: [
       /current(ly)? (team|staff|headcount|resources) (cannot|can't|is unable|are unable|are (too )?junior)/i,
       /existing (team|staff|headcount) (cannot|can't|is unable|are)/i,
@@ -485,7 +525,8 @@ const CRITERIA = {
   },
   downlevel: {
     label: "Why this level? Can you downlevel?",
-    hint: "Address whether a lower-level hire was considered and why it won't work.",
+    context: "Backfill / Repurpose",
+    hint: "Tip: Explicitly address whether a lower level was considered and why it won't work — e.g. 'A P3 would lack the cross-functional influence required' or 'downleveling would increase ramp time beyond what the business can absorb.'",
     keywords: [
       /downlevel/i,
       /down.level/i,
@@ -503,7 +544,8 @@ const CRITERIA = {
   },
   cascade: {
     label: "Cascade details",
-    hint: "Provide specific details about the cascade — who is cascading and to where.",
+    context: "FTE Cascade only",
+    hint: "Tip: Name who is cascading, what level they're moving to, and what role or team they're moving into. Be specific — 'cascading to a senior role in X org' is not sufficient.",
     keywords: [
       /cascade/i,
       /cascading/i
@@ -511,7 +553,8 @@ const CRITERIA = {
   },
   contractLength: {
     label: "Why this length of contract? What happens to this work after this contract ends?",
-    hint: "Justify the contract duration and explain what happens to the work when it ends.",
+    context: "CW types",
+    hint: "Tip: State the contract duration and explain why that length is appropriate — e.g. tied to a project phase, budget cycle, or defined deliverable. Then explain what happens to the work when it ends: does it stop, transfer, or convert?",
     keywords: [
       /contract (length|term|duration|period)/i,
       /length of (the|this) contract/i,
@@ -527,7 +570,8 @@ const CRITERIA = {
   },
   longTerm: {
     label: "Long term strategy — will you convert this role? Will this project end?",
-    hint: "Address the long-term plan: conversion to FTE, project sunset, or other outcome.",
+    context: "CW types",
+    hint: "Tip: Explicitly state the long-term intent — e.g. 'We plan to convert this role to FTE in FY26,' 'This project ends in Q3 and the work will not continue,' or 'This is ongoing work that we intend to keep as a contract role.'",
     keywords: [
       /long.?term (plan|strategy|goal|vision|intent)/i,
       /convert (this role|to (an? )?fte|to permanent)/i,
@@ -542,7 +586,8 @@ const CRITERIA = {
   },
   notFte: {
     label: "Why not convert this role to an FTE?",
-    hint: "Explain why this contingent worker role is not being converted to a full-time employee.",
+    context: "CW Extension only",
+    hint: "Tip: Address why conversion to FTE isn't happening — e.g. headcount freeze, budget constraints, temporary nature of the work, or that conversion is planned but not yet approved. Be direct; don't leave this implied.",
     keywords: [
       /not (being )?convert(ed)? to (an? )?fte/i,
       /cannot (be )?convert(ed)? to (an? )?fte/i,
@@ -557,7 +602,8 @@ const CRITERIA = {
   },
   topPriority: {
     label: "What top priority does this align to?",
-    hint: "Identify which company or team top priority this role supports.",
+    context: "All types",
+    hint: "Tip: Name a specific OKR, strategic initiative, or company priority this role directly supports — e.g. 'This role supports the FY26 priority of expanding into LATAM markets.' Saying it supports 'the team's goals' is not sufficient.",
     keywords: [
       /top priority/i,
       /strategic priority/i,
@@ -574,7 +620,8 @@ const CRITERIA = {
   },
   incrementalChange: {
     label: "What specifically changed that created this need?",
-    hint: "Explain what new demand, initiative, or change drove this incremental request.",
+    context: "New Need / Incremental",
+    hint: "Tip: Identify the specific trigger — a new product launch, volume increase, org restructure, or new mandate. 'We have more work' is not enough; explain what changed and when.",
     keywords: [
       /what (specifically |has )changed/i,
       /created this need/i,
@@ -593,7 +640,8 @@ const CRITERIA = {
   },
   directReports: {
     label: "How many direct reports will this role have, and what level will they report into?",
-    hint: "State the number of direct reports and their levels (required for M2+ roles only).",
+    context: "M2+ roles",
+    hint: "Tip: State the exact number of direct reports and their levels — e.g. '4 direct reports at P3–P5.' If this is an individual contributor role, state that explicitly.",
     keywords: [
       /direct reports?/i,
       /will (manage|oversee|lead) \d+/i,
@@ -611,7 +659,8 @@ const CRITERIA = {
   },
   repurposeJustification: {
     label: "Why is this a repurpose and not a new need?",
-    hint: "Explain why this qualifies as a repurpose of existing headcount rather than a net-new request.",
+    context: "Repurpose Backfill",
+    hint: "Tip: Explain what existing headcount or budget is being redirected and why this doesn't constitute a net-new ask — e.g. 'This repurposes a vacated P4 slot from the X team within the same org budget.'",
     keywords: [
       /not a new (need|role|position|hire)/i,
       /repurpose (because|as|since|of)/i,
@@ -737,15 +786,23 @@ function review() {
     const expandId = `expand-${i}`;
     const caretId  = `caret-${i}`;
 
-    const expandContent = r.excerpt
-      ? `"${r.excerpt}"`
-      : (r.passed ? "Criterion addressed." : "No relevant content found in submission.");
+    const excerptText = r.excerpt || "";
+    const isWeakPass = r.passed && excerptText.length > 0 && excerptText.length < 80;
+
+    let expandContent;
+    if (r.passed) {
+      expandContent = excerptText
+        ? `"${excerptText}"${isWeakPass ? `<div class="weak-pass-warning">⚠ Answer may lack detail — consider expanding this response.</div>` : ""}`
+        : "Criterion addressed.";
+    } else {
+      expandContent = `<div class="tip-box">${crit.hint}</div>`;
+    }
 
     li.innerHTML = `
       <span class="icon ${r.passed ? "icon-pass" : "icon-fail"}">${r.passed ? "✓" : "✗"}</span>
       <div style="flex:1; min-width:0;">
         <div class="crit-header" onclick="toggleExpand('${expandId}','${caretId}')">
-          <span class="crit-text ${r.passed ? "" : "missing"}">${crit.label}</span>
+          <span class="crit-text ${r.passed ? "" : "missing"}">${crit.label}<span class="crit-context">${crit.context || ""}</span></span>
           <span class="caret" id="${caretId}">▼</span>
         </div>
         <div class="crit-expand ${r.passed ? "" : "missing-expand"}" id="${expandId}">
